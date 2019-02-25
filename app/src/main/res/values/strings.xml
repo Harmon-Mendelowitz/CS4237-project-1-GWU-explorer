@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">gwu-explorer</string>
+    <!-- Strings related to login -->
+    <string name="start">Start:</string>
+    <string name="destination">Destination:</string>
+    <string name="end">End:</string>
+    <string name="foggybottom">Foggy Bottom</string>
+    <string name="remember">Remember</string>
+    <string name="go">Go</string>
+    <string name="alerts">Alerts</string>
+</resources>
