@@ -13,7 +13,7 @@ class AlertsAdapter constructor(private val alerts: List<AlertItem>): RecyclerVi
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
+    override fun getItemCount(): Int{
 
         return alerts.size
     }
