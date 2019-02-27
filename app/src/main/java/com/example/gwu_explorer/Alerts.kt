@@ -12,12 +12,12 @@ class Alerts : AppCompatActivity(){
 
     private lateinit var recyclerView: RecyclerView
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
 
-        super.onCreate(savedInstanceState, persistentState)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alerts)
 
-        recyclerView = findViewById(R.id.recyclerVIEW)
+        recyclerView = findViewById(R.id.recyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
