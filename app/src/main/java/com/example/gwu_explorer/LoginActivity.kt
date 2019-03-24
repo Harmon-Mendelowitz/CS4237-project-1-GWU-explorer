@@ -42,6 +42,12 @@ class LoginActivity : AppCompatActivity(){
 
         val sharedPrefs = getSharedPreferences("locationstorage", Context.MODE_PRIVATE)
 
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialogopen))
+            .setMessage(getString(R.string.dialogdesc))
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ -> dialog.dismiss()}
+            .show()
+
         address = findViewById(R.id.destination)
         go = findViewById(R.id.gobutton)
         alerts = findViewById(R.id.alertsbutton)
@@ -58,7 +64,10 @@ class LoginActivity : AppCompatActivity(){
             {
                 sharedPrefs.edit().putString("SAVED_ADDRESS",address.text.toString()).apply()
             }
-
+            if(!remember.isChecked)
+            {
+                sharedPrefs.edit().putString("SAVED_ADDRESS","").apply()
+            }
             /*val sendIntent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.type = "text/plain"
@@ -93,13 +102,6 @@ class LoginActivity : AppCompatActivity(){
     override fun onStart() {
         super.onStart()
         Log.d("LoginActivity", "onStart called")
-        AlertDialog.Builder(this)
-            .setTitle("Welcome")
-            .setMessage("Please enter a location to travel to from Foggy Bottom. " +
-                    " The Alerts button can be used to view Metro Outages. " +
-                    " *Currently only works for non-transfer lines.")
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss()}
-            .show()
     }
 
     override fun onResume() {
