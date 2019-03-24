@@ -8,4 +8,10 @@
     <string name="remember">Remember</string>
     <string name="go">Go</string>
     <string name="alerts">Alerts</string>
+
+    <string name="dialogopen">Welcome</string>
+    <string name="dialogdesc">Please enter a location to travel to from Foggy Bottom.
+    The Alerts button can be used to view Metro Outages.
+    *Currently only works for non-transfer lines.</string>
+    <string name="ok">OK</string>
 </resources>
