@@ -2,6 +2,8 @@ package com.example.gwu_explorer
 
 import android.content.Context
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -20,6 +22,7 @@ class LoginActivity : AppCompatActivity(){
     private lateinit var go: Button
     private lateinit var alerts: Button
     private lateinit var remember: CheckBox
+    private lateinit var choices2: MutableList<String>
 
     private val textWatcher: TextWatcher = object : TextWatcher {
         override fun afterTextChanged(s: Editable?) {}
@@ -77,14 +80,28 @@ class LoginActivity : AppCompatActivity(){
 
             //Toast.makeText(this, "this is a toast message", Toast.LENGTH_LONG)
 
-            val choices = listOf("600 Maryland Ave SW, Washington, DC 20002, USA", "600 Main St, Laurel, MD, 20707, USA", "Another Fake Entry")
+            val select: String =  address.text.toString()
+
+            //val choices = listOf("600 Maryland Ave SW, Washington, DC 20002, USA", "600 Main St, Laurel, MD, 20707, USA", "Another Fake Entry")
+            val geocoder = Geocoder(this@LoginActivity)
+            val choices: List<Address> = geocoder.getFromLocationName(select, 5)
+            val choices2: MutableList<String> =  mutableListOf<String>()
+
+            for(i in 0 until choices.size) {
+                choices2.add(i, choices[i].getAddressLine(i))
+            }
+
             val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
-            arrayAdapter.addAll(choices)
+            arrayAdapter.addAll(choices2)
 
             AlertDialog.Builder(this)
                 .setTitle("Possible Matches")
                 .setAdapter(arrayAdapter) { _, which ->
-                    Toast.makeText(this, "You picked: ${choices[which]}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "You picked: ${choices2[which]}", Toast.LENGTH_SHORT).show()
+
+                    val intent: Intent = Intent(this, RouteActivity::class.java)
+                    intent.putExtra("location", choices[which])
+                    startActivity(intent)
                 }
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss()
                 }
