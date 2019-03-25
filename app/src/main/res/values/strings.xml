@@ -14,4 +14,7 @@
     The Alerts button can be used to view Metro Outages.
     *Currently only works for non-transfer lines.</string>
     <string name="ok">OK</string>
+
+    <string name="share">Share</string>
+    <string name="drive">Driving Instructions</string>
 </resources>

@@ -11,7 +11,7 @@ class AlertManager {
 
     // OkHttp is a library used to make network calls
     private val okHttpClient: OkHttpClient
-    private var ot: String? = null
+    //private var ot: String? = null
 
     // This runs extra code when TwitterManager is created (e.g. the constructor)
     init {
@@ -30,7 +30,7 @@ class AlertManager {
 
         okHttpClient = builder.build()
     }
-    fun retrieveOAuthToken(
+    /*fun retrieveOAuthToken(
         successCallback: (String) -> Unit,
         errorCallback: (Exception) -> Unit
     ) {
@@ -93,7 +93,7 @@ class AlertManager {
             }
         }
     )
-    }
+    }*/
 
     fun retrieveAlerts(
         key: String,
@@ -139,7 +139,133 @@ class AlertManager {
                             )
                         )
                     }
+                    if(statuses.length()==0)
+                    {
+                        alerts.add(
+                            AlertItem(
+                                line = "No Alerts",
+                                content = ""
+                            )
+                        )
+                    }
                     successCallback(alerts)
+                }
+                else
+                {
+                    errorCallback(Exception("Search failed"))
+                }
+
+            }
+        })
+
+    }
+
+
+
+    fun retrieveStations(
+        key: String,
+        from: String,
+        to: String,
+        successCallback: (List<AlertItem>) -> Unit,
+        errorCallback: (Exception) -> Unit
+    ) {
+
+// Building the request, passing the OAuth token as a header
+        val request = Request.Builder()
+            .url("https://api.wmata.com/Rail.svc/json/jPath?FromStationCode=$from&ToStationCode=$to")
+            .header("api_key", key)
+            .build()
+
+        okHttpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Similar error handling to last time
+                errorCallback(Exception("Call failed"))
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                // Similar success / error handling to last time
+                val route = mutableListOf<AlertItem>()
+                val responseString = response.body()?.string()
+
+                if (response.isSuccessful && responseString != null) {
+                    val statuses = JSONObject(responseString).getJSONArray("Path")
+                    for (i in 0 until statuses.length()) {
+                        val curr = statuses.getJSONObject(i)
+                        val name = curr.getString("StationName")
+
+                        route.add(
+                            AlertItem(
+                                line = name,
+                                content = ""
+                            )
+                        )
+                    }
+                    if(statuses.length()==0)
+                    {
+                        route.add(
+                            AlertItem(
+                                line = "No Route",
+                                content = ""
+                            )
+                        )
+                    }
+                    successCallback(route)
+                }
+                else
+                {
+                    errorCallback(Exception("Search failed"))
+                }
+
+            }
+        })
+
+    }
+
+
+
+    fun retrieveLocation(
+        key: String,
+        address: Address,
+        successCallback: (List<AlertItem>) -> Unit,
+        errorCallback: (Exception) -> Unit
+    ) {
+        val lat = address.latitude
+        val lon = address.longitude
+        val radius = 800
+
+
+// Building the request, passing the OAuth token as a header
+        val request = Request.Builder()
+            .url("https://api.wmata.com/Rail.svc/json/jStationEntrances?Lat=$lat&Lon=$lon&Radius=$radius")
+            .header("api_key", key)
+            .build()
+
+        okHttpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Similar error handling to last time
+                errorCallback(Exception("Call failed"))
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                // Similar success / error handling to last time
+                val destinations = mutableListOf<AlertItem>()
+                val responseString = response.body()?.string()
+
+                if (response.isSuccessful && responseString != null) {
+                    val statuses = JSONObject(responseString).getJSONArray("Entrances")
+                    for (i in 0 until statuses.length()) {
+                        val curr = statuses.getJSONObject(i)
+                        val name = curr.getString("Name")
+                        val stationCode = curr.getString("StationCode1")
+
+                        destinations.add(
+                            AlertItem(
+                                line = name,
+                                content = stationCode
+                            )
+                        )
+                    }
+                    successCallback(destinations)
                 }
                 else
                 {

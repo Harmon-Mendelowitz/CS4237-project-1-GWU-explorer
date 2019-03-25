@@ -7,6 +7,7 @@ import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.widget.Toast
 
 //import kotlinx.android.synthetic.main.activity_alerts.*
@@ -34,6 +35,7 @@ class Alerts : AppCompatActivity(){
 
 
         if (savedInstanceState != null) {
+            @Suppress("UNCHECKED_CAST")
             val previousAlerts: List<AlertItem> = savedInstanceState.getSerializable("ALERTS") as List<AlertItem>
             alertList.addAll(previousAlerts)
 
@@ -90,5 +92,29 @@ class Alerts : AppCompatActivity(){
             ,AlertItem("","fake error 5")
             ,AlertItem("","fake error 6")
         )
+    }
+    override fun onStart() {
+        super.onStart()
+        Log.d("LoginActivity", "onStart called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("LoginActivity", "onResume called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("LoginActivity", "onPause called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("LoginActivity", "onStop called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LoginActivity", "onDestroy called")
     }
 }
