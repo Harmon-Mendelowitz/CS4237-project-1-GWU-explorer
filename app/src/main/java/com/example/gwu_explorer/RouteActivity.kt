@@ -13,7 +13,6 @@ import android.widget.Toast
 
 class RouteActivity : AppCompatActivity(){
 
-    //private val locationManager: AlertManager = AlertManager()
     private val locationList: MutableList<AlertItem> = mutableListOf()
 
     private val stationManager: AlertManager = AlertManager()
@@ -41,56 +40,6 @@ class RouteActivity : AppCompatActivity(){
         drive = findViewById(R.id.drivebutton)
 
 
-        /*if (savedInstanceState != null) {
-            @Suppress("UNCHECKED_CAST")
-            val previousLocations: List<AlertItem> = savedInstanceState.getSerializable("LOCATIONS") as List<AlertItem>
-            locationList.addAll(previousLocations)
-
-            //recyclerView.adapter = AlertsAdapter(locationList)
-        }
-        else {
-            stationManager.retrieveLocation(
-                key = getString(R.string.wmata_key),
-                address = add,
-
-                //LinesAffected = l,
-                //Description = d,
-                successCallback = { locations ->
-                    runOnUiThread {
-                        locationList.clear()
-                        locationList.addAll(locations)
-                        //recyclerView.adapter = AlertsAdapter(locations)
-                        endCode = locationList[0].content
-                    }
-                },
-                errorCallback = {
-                    runOnUiThread {
-                        // Runs if we have an error
-                        Toast.makeText(this@RouteActivity, "Error retrieving destinations", Toast.LENGTH_LONG).show()
-                    }
-                }
-            )
-            if(locationList.size>0) {
-                endCode = locationList[0].content
-            }
-            else
-            {
-                endCode = "C02"
-                //  val intent: Intent = Intent(this, LoginActivity::class.java)
-                //  Toast.makeText(this@RouteActivity, "error finding nearby station", Toast.LENGTH_LONG).show()
-            }
-        //}
-*/
-
-
-        //Toast.makeText(this@RouteActivity, locationList[0].content, Toast.LENGTH_LONG).show()
-        //Toast.makeText(this@RouteActivity, endCode, Toast.LENGTH_LONG).show()
-
-
-        //val intent: Intent = intent
-        //val location: String = intent.getStringExtra("location")
-
-
         if (savedInstanceState != null) {
             @Suppress("UNCHECKED_CAST")
             val previousStations: List<AlertItem> = savedInstanceState.getSerializable("STATIONS") as List<AlertItem>
@@ -101,29 +50,42 @@ class RouteActivity : AppCompatActivity(){
         else {
             //first time activity launch
 
-            // Get the intent which was used to launch this activity and retrieve data from it
-
-            //val intent: Intent = intent
-            //val l: String = intent.getStringExtra("LinesAffected")
-            //val d: String = intent.getStringExtra("Description")
-
             //title = getString(R.string.alerts_title, location.getAddressLine(0))
 
-
-            stationManager.retrieveLocation(
+            stationManager.getS(
                 key = getString(R.string.wmata_key),
                 address = add,
 
-                //LinesAffected = l,
-                //Description = d,
                 successCallback = { locations ->
                     runOnUiThread {
                         locationList.clear()
-                        locationList.addAll(locations)
-                        //recyclerView.adapter = AlertsAdapter(locations)
-                        endCode = locationList[0].content
+                        endCode = locations
                     }
-                    endCode = locationList[0].content
+                    Thread.sleep(1500)
+                    if(endCode.equals("C04"))
+                    {
+                        val intent: Intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
+                    stationManager.retrieveStations(
+                        key = getString(R.string.wmata_key),
+                        to = endCode,
+                        from = startCode,
+                        successCallback = { stations ->
+                            runOnUiThread {
+                                stationList.clear()
+                                stationList.addAll(stations)
+                                // Create the adapter and assign it to the RecyclerView
+                                recyclerView.adapter = AlertsAdapter(stations)
+                            }
+                        },
+                        errorCallback = {
+                            runOnUiThread {
+                                // Runs if we have an error
+                                Toast.makeText(this@RouteActivity, "Error retrieving Stations", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    )
                 },
                 errorCallback = {
                     runOnUiThread {
@@ -133,27 +95,6 @@ class RouteActivity : AppCompatActivity(){
                 }
             )
 
-            stationManager.retrieveStations(
-                key = getString(R.string.wmata_key),
-                to = endCode,
-                from = startCode,
-                //LinesAffected = l,
-                //Description = d,
-                successCallback = { stations ->
-                    runOnUiThread {
-                        stationList.clear()
-                        stationList.addAll(stations)
-                        // Create the adapter and assign it to the RecyclerView
-                        recyclerView.adapter = AlertsAdapter(stations)
-                    }
-                },
-                errorCallback = {
-                    runOnUiThread {
-                        // Runs if we have an error
-                        Toast.makeText(this@RouteActivity, "Error retrieving Stations", Toast.LENGTH_LONG).show()
-                    }
-                }
-            )
         }
 
 
@@ -178,8 +119,6 @@ class RouteActivity : AppCompatActivity(){
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        //outState.putInt("SOME_INT", 5)
-        //outState.putBoolean("SOME_BOOL", true)
         outState.putSerializable("LOCATIONS", ArrayList(locationList))
         outState.putSerializable("STATIONS", ArrayList(stationList))
     }

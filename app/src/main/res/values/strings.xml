@@ -17,4 +17,7 @@
 
     <string name="share">Share</string>
     <string name="drive">Driving Instructions</string>
+
+    <string name="yourline">Your Line:</string>
+    <string name="ok2">OK</string>
 </resources>
